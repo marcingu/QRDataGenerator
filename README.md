@@ -1,0 +1,2 @@
+# QRDataGenerator
+QR calculator
