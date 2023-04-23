@@ -99,20 +99,66 @@ def number_to_char(argument):
     }
     return switcher.get(argument, "invalid")
 
-def znak_kontrolny(znaki):
-    suma = 0
-    for c in znaki:
-        suma = suma + char_to_number(c)
-    return number_to_char(suma%43)
+def control_char(chars):
+    sum = 0
+    for c in chars:
+        sum = sum + char_to_number(c)
+    return number_to_char(sum%43)
 
-rok = int(input("Podaj rok dostawy np:22 : "))
-nrdostawy = int(input("Poday nr dostawy: "))
-liczba_sztuk = int(input("Liczba dostarczonych sztuk: "))
-qr_start="#059103502Q    ###*1T9 PYM"
+
+
+part_number = ''
+while len(part_number)<11:
+    part_number = str(input("Input part number: "))
+    part_number = part_number.replace('.','')        
+    if len(part_number)<11:             
+        while len(part_number)<11:
+            part_number+=' '
+    elif len(part_number)>11:
+        print('Part number too long!!!')
+
+color_code = ''
+while len(color_code)<3:
+    color_code = str(input("Input color code (or press ENTER if there is none): "))
+    if len(color_code)<3:            
+        while len(color_code)<3:
+            color_code+=' '
+    elif len(color_code)>3:
+        print('Color code too long!!!')
+
+
+
+module_number = str(input("Input BG-Nr - module number (you can find it on drawing): "))
+if len(module_number)<3:
+    while len(module_number)<3:
+        module_number+=' '
+elif len(module_number)>3:
+    print('Module number too long!!!')
+    exit()
+
+manufacturer_code = ''
+while len(manufacturer_code)<4:
+    manufacturer_code = str(input("Input Manufacturer code: "))
+    if len(manufacturer_code)==3:
+        manufacturer_code = ' '+manufacturer_code
+    elif len(manufacturer_code)>4:
+        print("Manufacturer code is too long!")
+
+
+year = int(input("Supply year [YY] : "))
+if year > 2000:
+    year -= 2000
+
+supply_number = int(input("Supply batch number in year: "))
+nr_of_qr = int(input("How many codes do you need: "))
+qr_start="#" + (part_number) + color_code + "###*" + module_number + manufacturer_code
+qr_start=qr_start.upper()
 qr_end="*="
-serial_number_start=rok * 10000000 + nrdostawy * 100000
-for i in range(liczba_sztuk):
+serial_number_start=year * 10000000 + supply_number * 100000
+for i in range(nr_of_qr):
     serial_number = serial_number_start + i
     qr = qr_start + str(serial_number)
-    caly_qr = qr + znak_kontrolny(qr) + qr_end
-    print(caly_qr)
+    whole_qr = qr + control_char(qr) + qr_end
+    print(whole_qr)
+    
+input()
